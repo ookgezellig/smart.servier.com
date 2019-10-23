@@ -255,14 +255,19 @@ def getImageURLs(wpurl):
     #print(PAGES.items())
     imagelist=[]
 
-    CATCH THE CASR FOR 0 images, for insrance in  https://ps.wikipedia.org/wiki/د_هډوکي_ماتېدل
-    (via https://www.wikidata.org/wiki/Q68833)
     for k, v in PAGES.items():
-        for img in v['images']:
-            imagelist.append(img["title"].split(":")[1]) #strip off the File: , Bestand: , Datei etc parts
+        #print(v)
+        images = v.get('images') #https://realpython.com/python-keyerror/
+        if images:
+            for img in images:
+                imagelist.append(img["title"].split(":")[1]) #strip off the File: , Bestand: , Datei etc parts
+        #else: imagelist.append('No images in this article')
     return imagelist
 
 print('*' *100)
+
+
+Woorden tellen: https://nl.wikipedia.org/w/api.php?format=json&action=query&list=search&srsearch=Bibliotheek&
 
 # def image2WordRatio(wpurl):
 #     return ratio
@@ -281,7 +286,7 @@ wikipedialist = []
 xrow = 0
 totalimagelist = []  # this list will contain all images of all wparticles for all rows of the dataframe
 
-for index, row in df2.head(50).iterrows():
+for index, row in df2.loc[25:27].iterrows():
     rowimagelist = []  # this list will contain all images of all wparticles for this row pof the dataframe
     print(row['CommonsTitle'], row['Qid'])
 
@@ -328,7 +333,7 @@ for index, row in df2.head(50).iterrows():
             ws_wp.write_formula(even_cell, '=HYPERLINK('+odd_cell+',"'+ str(wpclick)+'")',cell_format2) #in alle even celindexen (
 
             imagelist=getImageURLs(wpurl)
-            print("imagelist for " + str(wpurl) + " : " +  str(imagelist))
+            print("There are " + str(len(imagelist)) + " images in " + str(wpurl) + " : " +  str(imagelist))
             rowimagelist.append(imagelist)
         flatrowimagelist = [item for sublist in rowimagelist for item in sublist] #flatten this listr of lists
         # https://stackoverflow.com/questions/952914/how-to-make-a-flat-list-out-of-list-of-lists
